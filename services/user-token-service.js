@@ -37,8 +37,7 @@ class UserTokenService {
   
   async generateAndSavePairTokens(userDto) {
     const tokens = this.generatePairTokens({ ...userDto }); 
-    // Save refresh token to DB
-    await this.saveRefreshTokenToDB(userDto._id, tokens.refreshToken);
+    await this.saveRefreshTokenToDB(userDto._id, tokens.refreshToken);    
     return tokens;
   }
 }
