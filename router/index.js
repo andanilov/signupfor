@@ -34,4 +34,9 @@ router.get(routes.account,
   userController.account
 );
 
+router.get(routes.users,
+  authMiddleware,
+  userController.getUser
+);
+
 module.exports = router;

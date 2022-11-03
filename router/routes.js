@@ -1,4 +1,5 @@
 module.exports = {
+  // Auth
   registration: '/registration',
   activate: '/activate/:activationLink',
   login: '/login',
@@ -7,4 +8,6 @@ module.exports = {
   remember: '/remember',
   account: '/account',
   redact: '/redact',
+  // Users
+  users: '/users',
 };

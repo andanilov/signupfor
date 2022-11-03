@@ -28,6 +28,8 @@ class UserService {
     if (!user) throw ApiError.BadRequest(`Пользователь не найден или данные не верные!`);
     const arePasswordSame = await bcrypt.compare(password, user.password);
     if (!arePasswordSame) throw ApiError.BadRequest(`Пользователь не найден или данные не верные!`);
+    user.lastEnter = +new Date();
+    await user.save();
     return await this._getUserDtoAndTokens(user);
   }
 
@@ -88,11 +90,36 @@ class UserService {
     return new UserDto(user);
   }
 
+  async getUsers (actor, sortCol, sortDirection, limit) {    
+    if (!actor || actor.role !== 'admin') throw ApiError.BadRequest();
+    return await UserModel.find({}, 'email name role isActivated registered lastAction').sort({ [sortCol] : sortDirection }).limit(limit);  
+    // const userIds = this._getIdsArr(users); 
+    // const userDatetimes = await UserActivationLinkModel.find({'user_id': {'$in': userIds}}, 'user_id datetime');
+    // const userDatetimesByUserId = this._groupObjByCol 
+    // (userDatetimes, 'user_id');
+    // const usersWithDatetime = this._getObjCopy(users).map((user, i) => (
+      // { ...user, registered: userDatetimesByUserId?.[user._id]['datetime'] }
+    // ));
+    // return usersWithDatetime;
+  }
+
   async _getUserDtoAndTokens(user) {
     const userDto = new UserDto(user);
     const tokens = await userTokenService.generateAndSavePairTokens(userDto);
     return { ...tokens, user: userDto };  
   }
+
+  // _getIdsArr = (arr) => arr.map(({ _id }) => _id);
+
+  // _groupObjByCol = (arr, col = '_id') => Array.isArray(arr)
+  //   ? arr.reduce((acc, el) => ({ ...acc, [el[col]]: el}), {})
+  //   : [];
+
+  // _getObjCopy = (obj) => JSON.parse(JSON.stringify(obj));
+
+  // _joinBy = (base, colId, arrs) => base.map(({ _id, ...rest }) => {
+  // });
+
 }
 
 module.exports = new UserService();
