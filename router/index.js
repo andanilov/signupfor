@@ -33,10 +33,13 @@ router.get(routes.account,
   authMiddleware,
   userController.account
 );
-
 router.get(routes.users,
   authMiddleware,
   userController.getUser
+);
+router.delete(routes.user + '/:_id',
+  authMiddleware,
+  userController.removeUser
 );
 
 module.exports = router;

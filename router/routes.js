@@ -10,4 +10,5 @@ module.exports = {
   redact: '/redact',
   // Users
   users: '/users',
+  user: '/user',
 };

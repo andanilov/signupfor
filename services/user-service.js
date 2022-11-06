@@ -10,6 +10,8 @@ const UserPasswordRequestModel = require('../models/user-password-request-model'
 const routes = require('../router/routes');
 const generatePassword = require('password-generator');
 const getPeriodByString = require('../utils/getPeriodByString');
+const userTokenModel = require('../models/user-token-model');
+const userPasswordRequestModel = require('../models/user-password-request-model');
 
 class UserService {
   async registration (email, password, name) {
@@ -19,7 +21,7 @@ class UserService {
     const user = await UserModel.create({ email, password: passwordHash, name });
     const activationLink = uuid.v4();
     await UserActivationLinkModel.create({ user_id: user._id, activationLink, datetime: +new Date() });
-    await mailService.sendActiovationMail(email, `${process.env.API_URL}${process.env.API_ROUTE}/activate/${activationLink}`); 
+    // await mailService.sendActiovationMail(email, `${process.env.API_URL}${process.env.API_ROUTE}/activate/${activationLink}`); 
     return await this._getUserDtoAndTokens(user);
   }
 
@@ -93,14 +95,16 @@ class UserService {
   async getUsers (actor, sortCol, sortDirection, limit) {    
     if (!actor || actor.role !== 'admin') throw ApiError.BadRequest();
     return await UserModel.find({}, 'email name role isActivated registered lastAction').sort({ [sortCol] : sortDirection }).limit(limit);  
-    // const userIds = this._getIdsArr(users); 
-    // const userDatetimes = await UserActivationLinkModel.find({'user_id': {'$in': userIds}}, 'user_id datetime');
-    // const userDatetimesByUserId = this._groupObjByCol 
-    // (userDatetimes, 'user_id');
-    // const usersWithDatetime = this._getObjCopy(users).map((user, i) => (
-      // { ...user, registered: userDatetimesByUserId?.[user._id]['datetime'] }
-    // ));
-    // return usersWithDatetime;
+  }
+
+  async removeUser (actor, _id) {
+    if (!actor || !_id) throw ApiError.BadRequest();
+    if (actor?._id !== _id && actor.role !== 'admin') throw ApiError.BadRequest('Недостаточно прав для удаления пользователя!');
+    await UserModel.remove({ _id });
+    await userTokenModel.remove({ user_id: _id });
+    await userPasswordRequestModel.remove({ user_id: _id });
+    await UserActivationLinkModel.remove({ user_id: _id });
+    return true;
   }
 
   async _getUserDtoAndTokens(user) {

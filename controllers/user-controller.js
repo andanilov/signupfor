@@ -2,6 +2,7 @@
 const { validationResult } = require('express-validator');
 const ApiError = require('../exceptions/api-error');
 const userService = require('../services/user-service');
+const authController = require('./auth-controller');
 
 class UserController {
   async account (req, res, next) {
@@ -29,14 +30,17 @@ class UserController {
     }
   }
 
-  // async getUser (req, res, next) {
-  //   try {
-      
-  //   } catch (e) {
-  //     console.log(e);
-  //     next(e);
-  //   }
-  // }
+  async removeUser (req, res, next) {
+    try {
+      const actor = req?.user;
+      const _id = req?.params?._id;
+      await userService.removeUser(actor, _id);
+      return res.json();
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
 }
 
 module.exports = new UserController();
