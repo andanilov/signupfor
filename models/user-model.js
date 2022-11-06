@@ -6,8 +6,8 @@ const UserSchema = new Schema({
   name: { type: String, required: false },
   role: { type: String, default: 'user' },
   isActivated: { type: Boolean, default: false },
-  registered: { type: Number, default: +new Date() },
-  lastAction: { type: Number, default: +new Date() },
+  registered: { type: Number, required: false },
+  lastAction: { type: Number, required: false },
 });
 
 module.exports = model('User', UserSchema);

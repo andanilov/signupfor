@@ -18,14 +18,14 @@ class UserService {
     const applicant = await UserModel.findOne({ email });
     if (applicant) throw ApiError.BadRequest(`Пользователь с адресом ${email} уже существует!`);
     const passwordHash = await bcrypt.hash(password, +process.env.PSWD_HASH_SALT);
-    const user = await UserModel.create({ email, password: passwordHash, name });
+    const user = await UserModel.create({ email, password: passwordHash, name, registered: +new Date(), lastAction: +new Date() });
     const activationLink = uuid.v4();
     await UserActivationLinkModel.create({ user_id: user._id, activationLink, datetime: +new Date() });
     await mailService.sendActiovationMail(email, `${process.env.API_URL}${process.env.API_ROUTE}/activate/${activationLink}`); 
     return await this._getUserDtoAndTokens(user);
   }
 
-  async login (email, password) {git commit
+  async login (email, password) {
     const user = await UserModel.findOne({ email });
     if (!user) throw ApiError.BadRequest(`Пользователь не найден или данные не верные!`);
     const arePasswordSame = await bcrypt.compare(password, user.password);
