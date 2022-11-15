@@ -3,7 +3,6 @@ const { validationResult } = require('express-validator');
 const ApiError = require('../exceptions/api-error');
 const userService = require('../services/user-service');
 const cookieService = require('../services/cookie-service');
-const routesClient = require('../router/routes-client');
 const getRemoteClientInfo = require('../utils/getRemoteClientInfo');
 const noticeClientRedirect = require('../notice/notice-client-redirect');
 

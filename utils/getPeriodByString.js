@@ -1,4 +1,3 @@
-// 5m -> 5 * 60 * 1000
 const periodRules = {
 	ms: 1000,
 	get s() { return this.ms * 60 },
@@ -7,9 +6,15 @@ const periodRules = {
 	get d() { return this.h * 24 },
 }
 
-module.exports = function (str) {
-	const num = +str.match(/\d+/)[0];
-	const timeType = str.match(/[A-Za-z]+/)[0];
+/**
+ * Convert period to microseconds.
+ * @function getPeriodByString2
+ * @param {string} period - Period. For example: 10s | 15m | 25h | 3d
+ * @returns {number|string} - Period in microseconds
+ */
+module.exports = function getPeriodByString(period) {
+	const num = +period.match(/\d+/)[0];
+	const timeType = period.match(/[A-Za-z]+/)[0];
 
-	return (periodRules[timeType] && num) ? num * periodRules[timeType] : str;
+	return (periodRules[timeType] && num) ? num * periodRules[timeType] : period;
 }

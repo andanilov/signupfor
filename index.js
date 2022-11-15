@@ -3,11 +3,16 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
+// --- Swagger Documentation '/api-doc'
+require('./swagger/index')(app);
+
 // --- Middlewares
 const cors = require('cors'); // For request by browser
 const cookieParser = require('cookie-parser');
 const router = require('./router/index');
 const errorMiddleware = require('./middlewares/error-middleware');
+const userRouter = require('./router/user-router');
+const mainRouter = require('./router/indx');
 
 // Settings
 const port = process.env.PORT || 80;
@@ -17,6 +22,7 @@ app.use(express.json());
 app.use(cookieParser()); 
 app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
 app.use(process.env.API_ROUTE, router);
+mainRouter(app);
 app.use(errorMiddleware);
 
 // Connect to database and Server starting

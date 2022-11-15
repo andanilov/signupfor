@@ -1,11 +1,11 @@
-const Router = require('express').Router;
+// const Router = require('express').Router;
+const express = require('express');
+const router = express.Router();
 const authController = require('../controllers/auth-controller');
 const { body } = require('express-validator');
 const routes = require('./routes');
 const authMiddleware = require('../middlewares/auth-middleware');
-const userController = require('../controllers/user-controller');
-
-const router = new Router();
+const userRouter = require('./user-router');
 
 // Authorization
 router.post(routes.registration,
@@ -29,17 +29,18 @@ router.post(routes.redact,
 );
 
 // User
-router.get(routes.account,
-  authMiddleware,
-  userController.account
-);
-router.get(routes.users,
-  authMiddleware,
-  userController.getUser
-);
-router.delete(routes.user + '/:_id',
-  authMiddleware,
-  userController.removeUser
-);
+// router.us
+// router.get(routes.account,
+//   authMiddleware,
+//   userController.account
+// );
+// router.get(routes.users,
+//   authMiddleware,
+//   userController.getUser
+// );
+// router.delete(routes.user + '/:_id',
+//   authMiddleware,
+//   userController.removeUser
+// );
 
 module.exports = router;
